@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "driver": "mysql",
+    "host": "localhost",
+    "port": "3306",
+    "database": "market",
+    "user": "root",
+    "password": "#3Lla@76cO3",
+    "multipleStatements": true
+  },
+  "test": {
+    "driver": "mysql",
+    "host": "localhost",
+    "port": "3306",
+    "database": "market_test",
+    "user": "root",
+    "password": "#3Lla@76cO3",
+    "multipleStatements": true
+  }
+}

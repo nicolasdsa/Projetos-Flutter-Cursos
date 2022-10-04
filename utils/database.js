@@ -1,19 +1,29 @@
-const { MongoClient } = require("mongodb");
+const mysql = require("mysql2/promise");
 
-class Database {
+class DataBase {
   constructor() {
-    this.url = "mongodb://localhost:27017";
-    this.client = new MongoClient(this.url);
+    this.host = process.env.DATABASE_HOST;
+    this.database = process.env.DATABASE_DATABASE;
+    this.user = process.env.DATABASE_USER;
+    this.password = process.env.DATABASE_PASSWORD;
   }
 
   async init() {
-    await this.client.connect();
-    this.db = this.client.db("mercado");
+    this.connection = await mysql.createConnection({
+      host: this.host,
+      user: this.user,
+      database: this.database,
+      password: this.password,
+    });
   }
 
-  getCollection(collection) {
-    return this.db.collection(collection);
+  async query(sql, params) {
+    if(!this.connection){
+      await this.init();
+    }
+
+    return await this.connection.execute(sql, params);
   }
 }
 
-module.exports = new Database();
+module.exports = new DataBase();
