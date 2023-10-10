@@ -4,6 +4,7 @@ import '../utils/app_routes.dart';
 class MainDrawer extends StatelessWidget {
   const MainDrawer({Key? key}) : super(key: key);
 
+  // Função para criar um item de menu.
   Widget _createItem(IconData icon, String label, Function() onTap) {
     return ListTile(
       leading: Icon(
@@ -18,12 +19,13 @@ class MainDrawer extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      onTap: onTap,
+      onTap: onTap, // Ao tocar no item, chama a função fornecida (navegação).
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    /*é um widget em Flutter que representa um painel deslizante que normalmente é usado para exibir opções de navegação e configurações em um aplicativo. É comumente acessado deslizando da borda lateral da tela, geralmente da esquerda para a direita (ou vice-versa), embora sua posição e comportamento possam ser personalizado.*/
     return Drawer(
       child: Column(
         children: [

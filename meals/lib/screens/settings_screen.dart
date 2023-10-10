@@ -22,12 +22,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     settings = widget.settings;
   }
 
+  // Cria um componente de switch com título, subtítulo e função de callback.
   Widget _createSwitch(
     String title,
     String subtitle,
     bool value,
     Function(bool) onChanged,
   ) {
+    /*é um widget em Flutter que combina um interruptor (switch) com um rótulo (label) em um único componente. Ele é usado para criar uma interface de usuário onde o usuário pode alternar entre dois estados, como ativar ou desativar uma configuração, e o rótulo fornece uma descrição ou contexto para o interruptor.*/
     return SwitchListTile.adaptive(
       title: Text(title),
       subtitle: Text(subtitle),
@@ -43,16 +45,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Configurações'),
+        title: const Text('Configurações'), // Título da tela de configurações
       ),
-      drawer: const MainDrawer(),
+      drawer: const MainDrawer(), // Menu de navegação lateral
       body: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(20),
             child: Text(
               'Configurações',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
           Expanded(

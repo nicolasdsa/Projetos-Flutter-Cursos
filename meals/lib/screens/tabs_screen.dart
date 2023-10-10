@@ -20,6 +20,7 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   void initState() {
+    // Define as guias disponíveis com títulos e as telas correspondentes.
     super.initState();
     _screens = [
       {
@@ -33,6 +34,7 @@ class _TabsScreenState extends State<TabsScreen> {
     ];
   }
 
+  // Função para selecionar uma guia.
   _selectScreen(int index) {
     setState(() {
       _selectedScreenIndex = index;
@@ -47,14 +49,20 @@ class _TabsScreenState extends State<TabsScreen> {
           _screens![_selectedScreenIndex]['title'] as String,
         ),
       ),
-      drawer: const MainDrawer(),
-      body: _screens![_selectedScreenIndex]['screen'] as Widget,
+      drawer: const MainDrawer(), // Menu de navegação lateral
+      body: _screens![_selectedScreenIndex]['screen']
+          as Widget, // Exibe a tela selecionada
+
+      /*É um widget em Flutter que é usado para criar uma barra de navegação na parte inferior de uma tela. Ele é frequentemente usado em aplicativos móveis para permitir a navegação entre diferentes telas ou seções do aplicativo. A barra de navegação inferior geralmente contém ícones ou rótulos que representam as diferentes opções de navegação disponíveis.*/
       bottomNavigationBar: BottomNavigationBar(
-        onTap: _selectScreen,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Colors.white,
-        selectedItemColor: Theme.of(context).colorScheme.secondary,
-        currentIndex: _selectedScreenIndex,
+        onTap: _selectScreen, // Função chamada quando uma guia é tocada
+        backgroundColor: Theme.of(context)
+            .colorScheme
+            .primary, // Cor de fundo da barra de navegação
+        unselectedItemColor: Colors.white, // Cor dos ícones não selecionados
+        selectedItemColor:
+            Theme.of(context).colorScheme.secondary, // Cor do ícone selecionado
+        currentIndex: _selectedScreenIndex, // Índice da guia selecionada
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.category),

@@ -7,11 +7,12 @@ class MealItem extends StatelessWidget {
 
   const MealItem(this.meal, {Key? key}) : super(key: key);
 
+  // Função chamada quando um item de refeição é selecionado.
   void _selectMeal(BuildContext context) {
     Navigator.of(context)
         .pushNamed(
-      AppRoutes.mealDetail,
-      arguments: meal,
+      AppRoutes.mealDetail, // Navega para a tela de detalhes da refeição
+      arguments: meal, // Passa a refeição como argumento para a próxima tela
     )
         .then((result) {
       if (result == null) {
@@ -24,18 +25,21 @@ class MealItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /* é um widget em Flutter que é frequentemente usado para tornar outros widgets interativos, permitindo que eles respondam a toques do usuário, como toques, pressões longas e arrastar. Ele é uma parte importante para adicionar feedback visual a elementos da interface do usuário e criar interações com o usuário.*/
     return InkWell(
-      onTap: () => _selectMeal(context),
+      onTap: () => _selectMeal(
+          context), // Ao tocar no item da refeição, chama a função _selectMeal
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(15), // Borda arredondada do card
         ),
         elevation: 4,
-        margin: const EdgeInsets.all(10),
+        margin: const EdgeInsets.all(10), // Margem ao redor do card
         child: Column(
           children: [
             Stack(
               children: [
+                /* é um widget em Flutter usado para recortar seu filho (child) em uma forma retangular arredondada. Ele permite que você crie caixas com cantos arredondados ou arredonda as bordas de elementos como imagens, criando uma aparência visual agradável.*/
                 ClipRRect(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(15),

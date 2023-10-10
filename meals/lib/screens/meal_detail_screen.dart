@@ -8,16 +8,18 @@ class MealDetailScreen extends StatelessWidget {
   const MealDetailScreen(this.onToggleFavorite, this.isFavorite, {Key? key})
       : super(key: key);
 
+  // Cria um título de seção com estilo apropriado.
   Widget _createSectionTitle(BuildContext context, String title) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Text(
         title,
-        style: Theme.of(context).textTheme.headline6,
+        style: Theme.of(context).textTheme.titleLarge,
       ),
     );
   }
 
+  // Cria um contêiner de seção com decoração.
   Widget _createSectionContainer(Widget child) {
     return Container(
       width: 330,
@@ -39,14 +41,16 @@ class MealDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(meal.title),
+        title: Text(meal.title), // Título da refeição
       ),
+      /*é um widget em Flutter que é usado para criar uma região rolável em torno de um único filho. Ele é frequentemente usado quando você tem um único widget filho que pode não caber inteiramente na tela e precisa ser rolado para ser completamente visível.*/
       body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
               height: 300,
               width: double.infinity,
+              //é um widget em Flutter que é usado para carregar e exibir uma imagem de uma URL da web
               child: Image.network(
                 meal.imageUrl,
                 fit: BoxFit.cover,
@@ -64,7 +68,8 @@ class MealDetailScreen extends StatelessWidget {
                         vertical: 5,
                         horizontal: 10,
                       ),
-                      child: Text(meal.ingredients[index]),
+                      child: Text(
+                          meal.ingredients[index]), // Lista de ingredientes
                     ),
                   );
                 },
@@ -84,7 +89,7 @@ class MealDetailScreen extends StatelessWidget {
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),
-                      title: Text(meal.steps[index]),
+                      title: Text(meal.steps[index]), // Lista de passos
                     ),
                     const Divider(),
                   ],
@@ -97,7 +102,8 @@ class MealDetailScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: Icon(isFavorite(meal) ? Icons.star : Icons.star_border),
         onPressed: () {
-          onToggleFavorite(meal);
+          onToggleFavorite(
+              meal); // Chama a função para marcar/desmarcar como favorita
         },
       ),
     );

@@ -24,6 +24,7 @@ class _MyAppState extends State<MyApp> {
   List<Meal> _availableMeals = dummyMeals;
   final List<Meal> _favoriteMeals = [];
 
+  // Esta função filtra as refeições com base nas configurações (glúten, lactose, etc.).
   void _filterMeals(Settings settings) {
     setState(() {
       this.settings = settings;
@@ -40,6 +41,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  // Esta função adiciona ou remove refeições aos favoritos.
   void _toggleFavorite(Meal meal) {
     setState(() {
       _favoriteMeals.contains(meal)
@@ -48,6 +50,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  // Esta função verifica se uma refeição está nos favoritos.
   bool _isFavorite(Meal meal) {
     return _favoriteMeals.contains(meal);
   }
@@ -64,7 +67,7 @@ class _MyAppState extends State<MyApp> {
         canvasColor: const Color.fromRGBO(255, 254, 229, 1),
         fontFamily: 'Raleway',
         textTheme: ThemeData.light().textTheme.copyWith(
-              headline6: const TextStyle(
+              titleLarge: const TextStyle(
                 fontSize: 20,
                 fontFamily: 'RobotoCondensed',
               ),
