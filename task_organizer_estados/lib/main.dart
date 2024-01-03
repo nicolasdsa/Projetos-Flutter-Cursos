@@ -1,3 +1,4 @@
+import 'package:task_organizer_estados/data/task_inherited.dart';
 import 'package:task_organizer_estados/screens/form_screen.dart';
 import 'package:task_organizer_estados/screens/tela_inicial.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +19,12 @@ class _MyAppState extends State<MyApp> {
   bool opacidade = true;
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const FormScreen(),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: TaskInherited(
+          child: InitialScreen(),
+        ));
   }
 }
