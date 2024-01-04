@@ -9,11 +9,20 @@ class Tasks extends StatefulWidget {
   Tasks(this.nome, this.foto, this.dificuldade, {Key? key}) : super(key: key);
 
   int level = 1;
+  int nivelDificuldade = 0;
   @override
   State<Tasks> createState() => _TasksState();
 }
 
 class _TasksState extends State<Tasks> {
+  final List<Color> masteryColors = [
+    Colors.blue, // Level 0
+    Colors.green, // Level 1
+    Colors.yellow, // Level 2
+    Colors.orange, // Level 3
+    Colors.red, // Level 4
+  ];
+
   bool assetOrNetwork() {
     if (widget.foto.contains('http')) {
       return false;
@@ -25,11 +34,16 @@ class _TasksState extends State<Tasks> {
   void levelUp() {
     setState(() {
       widget.level++;
+      if ((widget.level / widget.dificuldade) / 10 == 1) {
+        widget.level = 0;
+        widget.nivelDificuldade++;
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    Color taskColor = masteryColors[widget.nivelDificuldade];
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Stack(
@@ -37,7 +51,7 @@ class _TasksState extends State<Tasks> {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
-              color: Colors.blue,
+              color: taskColor,
             ),
             height: 140,
           ),
