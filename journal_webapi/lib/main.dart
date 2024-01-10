@@ -4,11 +4,10 @@ import 'package:journal_webapi/services/journal_service.dart';
 import 'screens/home_screen/home_screen.dart';
 
 void main() {
-  runApp(const MyApp());
-
   JournalService journalService = JournalService();
-  journalService.register("Teste");
-  //journalService.get();
+  journalService.get();
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

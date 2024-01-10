@@ -3,8 +3,12 @@ import 'package:http_interceptor/http_interceptor.dart';
 import 'package:journal_webapi/services/http_interceptors.dart';
 
 class JournalService {
-  static const String url = "/";
-  static const String resource = "learnhttp/";
+  static const String url = String.fromEnvironment('SERVER_URL');
+  static const String resource = "journals/";
+
+  http.Client client = InterceptedClient.build(
+    interceptors: [LoggingInterceptor()],
+  );
 
   String getURL() {
     return "$url$resource";
@@ -12,8 +16,11 @@ class JournalService {
 
   //TODO: Substituir getURL por getURI
   void register(String content) {
-    http.post(Uri.parse(getURL()), body: {'content': content});
+    client.post(Uri.parse(getURL()), body: {'content': content});
   }
 
-  void get() async {}
+  Future<String> get() async {
+    http.Response response = await client.get(Uri.parse(getURL()));
+    return response.body;
+  }
 }
