@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
+import 'package:journal_webapi/models/journal.dart';
 import 'package:journal_webapi/services/http_interceptors.dart';
 
 class JournalService {
@@ -14,9 +17,17 @@ class JournalService {
     return "$url$resource";
   }
 
-  //TODO: Substituir getURL por getURI
-  void register(String content) {
-    client.post(Uri.parse(getURL()), body: {'content': content});
+  Future<bool> register(Journal journal) async {
+    //String jsonJournal = json.encode(journal.toMap());
+    print(journal.content.toString());
+    http.Response response = await client.post(Uri.parse(getURL()),
+        body: {'content': journal.content.toString()});
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   Future<String> get() async {
