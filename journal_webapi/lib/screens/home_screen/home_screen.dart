@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:journal_webapi/database/database.dart';
 import 'package:journal_webapi/screens/home_screen/widgets/home_screen_list.dart';
+import 'package:journal_webapi/services/journal_service.dart';
 
 import '../../models/journal.dart';
 
@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, Journal> database = {};
 
   final ScrollController _listScrollController = ScrollController();
+  final JournalService _journalService = JournalService();
 
   @override
   void initState() {
@@ -37,6 +38,16 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text(
           "${currentDay.day}  |  ${currentDay.month}  |  ${currentDay.year}",
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              refresh();
+            },
+            icon: const Icon(
+              Icons.refresh,
+            ),
+          ),
+        ],
       ),
       body: ListView(
         controller: _listScrollController,
@@ -44,14 +55,25 @@ class _HomeScreenState extends State<HomeScreen> {
           windowPage: windowPage,
           currentDay: currentDay,
           database: database,
+          refreshFunction: refresh,
         ),
       ),
     );
   }
 
-  void refresh() {
+  void refresh() async {
+    List<Journal> listJournal = await _journalService.getAll();
+
     setState(() {
-      database = generateRandomDatabase(maxGap: windowPage, amount: 3);
+      database = {};
+      for (Journal journal in listJournal) {
+        database[journal.id] = journal;
+      }
+
+      if (_listScrollController.hasClients) {
+        final double position = _listScrollController.position.maxScrollExtent;
+        _listScrollController.jumpTo(position);
+      }
     });
   }
 }

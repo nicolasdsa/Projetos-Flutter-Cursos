@@ -17,21 +17,40 @@ class JournalService {
     return "$url$resource";
   }
 
-  Future<bool> register(Journal journal) async {
-    //String jsonJournal = json.encode(journal.toMap());
-    print(journal.content.toString());
-    http.Response response = await client.post(Uri.parse(getURL()),
-        body: {'content': journal.content.toString()});
-
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
-    }
+  Uri getUri() {
+    return Uri.parse(getURL());
   }
 
-  Future<String> get() async {
-    http.Response response = await client.get(Uri.parse(getURL()));
-    return response.body;
+  Future<bool> register(Journal journal) async {
+    String journalJSON = json.encode(journal.toMap());
+
+    http.Response response = await client.post(
+      getUri(),
+      headers: {'Content-type': 'application/json'},
+      body: journalJSON,
+    );
+
+    if (response.statusCode == 201) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<List<Journal>> getAll() async {
+    http.Response response = await client.get(getUri());
+
+    if (response.statusCode != 200) {
+      throw Exception();
+    }
+
+    List<Journal> result = [];
+
+    List<dynamic> jsonList = json.decode(response.body);
+    for (var jsonMap in jsonList) {
+      result.add(Journal.fromMap(jsonMap));
+    }
+
+    return result;
   }
 }
