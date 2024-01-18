@@ -1,17 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:http_interceptor/http_interceptor.dart';
+import 'package:journal_webapi_authentication/services/webclient.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/journal.dart';
-import 'http_interceptors.dart';
 
 class JournalService {
-  static const String url = "http://10.0.2.2:3000/";
   static const String resource = "journals/";
-
-  http.Client client = InterceptedClient.build(
-    interceptors: [LoggingInterceptor()],
-  );
+  String url = WebClient.url;
+  http.Client client = WebClient().client;
 
   String getURL() {
     return "$url$resource";
@@ -21,51 +19,92 @@ class JournalService {
     return Uri.parse(getURL());
   }
 
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken') ?? null;
+  }
+
   Future<bool> register(Journal journal) async {
+    String? token = await getToken();
     String journalJSON = json.encode(journal.toMap());
 
     http.Response response = await client.post(
       getUri(),
-      headers: {'Content-type': 'application/json'},
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
       body: journalJSON,
     );
 
-    if (response.statusCode == 201) {
-      return true;
+    if (response.statusCode == 401) {
+      throw UnauthorizedException();
     }
 
-    return false;
+    if (response.statusCode != 201) {
+      throw HttpException(response.body);
+    }
+
+    return true;
   }
 
   Future<bool> edit(String id, Journal journal) async {
+    journal.updatedAt = DateTime.now();
+    String? token = await getToken();
     String journalJSON = json.encode(journal.toMap());
 
     http.Response response = await client.put(
       Uri.parse("${getUri()}$id"),
-      headers: {'Content-type': 'application/json'},
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
       body: journalJSON,
     );
 
-    if (response.statusCode == 200) {
-      return true;
+    if (response.statusCode == 401) {
+      throw UnauthorizedException();
     }
 
-    return false;
+    if (response.statusCode != 200) {
+      throw HttpException(response.body);
+    }
+
+    return true;
   }
 
   Future<bool> remove(String id) async {
-    http.Response response = await http.delete(Uri.parse("${getUri()}$id"));
-    if (response.statusCode == 200) {
-      return true;
-    }
-    return false;
-  }
+    String? token = await getToken();
+    http.Response response = await http.delete(
+      Uri.parse("${getUri()}$id"),
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
-  Future<List<Journal>> getAll() async {
-    http.Response response = await client.get(getUri());
+    if (response.statusCode == 401) {
+      throw UnauthorizedException();
+    }
 
     if (response.statusCode != 200) {
-      throw Exception();
+      throw HttpException(response.body);
+    }
+
+    return true;
+  }
+
+  Future<List<Journal>> getAll(
+      {required String? id, required String? token}) async {
+    //String? token = await getToken();
+    http.Response response = await client.get(
+      getUri(),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 401) {
+      throw UnauthorizedException();
+    }
+
+    if (response.statusCode != 200) {
+      throw HttpException(response.body);
     }
 
     List<Journal> result = [];
@@ -77,4 +116,8 @@ class JournalService {
 
     return result;
   }
+}
+
+class UnauthorizedException implements Exception {
+  final String message = "Usuário não autorizado";
 }

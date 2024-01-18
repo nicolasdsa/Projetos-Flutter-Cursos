@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:journal_webapi_authentication/helpers/logout.dart';
 import 'package:journal_webapi_authentication/screens/common/confirmation_dialog.dart';
+import 'package:journal_webapi_authentication/screens/common/exception_dialog.dart';
 import 'package:journal_webapi_authentication/services/journal_service.dart';
 import 'package:uuid/uuid.dart';
 import '../../../helpers/weekday.dart';
@@ -10,12 +14,15 @@ class JournalCard extends StatelessWidget {
   final Journal? journal;
   final DateTime showedDate;
   final Function refreshFunction;
-  const JournalCard({
-    Key? key,
-    this.journal,
-    required this.showedDate,
-    required this.refreshFunction,
-  }) : super(key: key);
+  final String userId;
+
+  const JournalCard(
+      {Key? key,
+      this.journal,
+      required this.showedDate,
+      required this.refreshFunction,
+      required this.userId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +127,8 @@ class JournalCard extends StatelessWidget {
         id: const Uuid().v1(),
         content: "",
         createdAt: showedDate,
-        updatedAt: showedDate);
+        updatedAt: showedDate,
+        userId: userId);
 
     if (journal != null) {
       internalJournal = journal;
@@ -165,11 +173,25 @@ class JournalCard extends StatelessWidget {
         JournalService service = JournalService();
         if (journal != null) {
           service.remove(journal!.id).then((value) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
                 content: Text((value)
                     ? "Removido com sucesso!"
-                    : "Houve um erro ao remover")));
-          }).then((value) {
+                    : "Houve um erro ao remover"),
+              ),
+            );
+          }).catchError(
+            (error) {
+              logout(context);
+            },
+            test: (error) => error is UnauthorizedException,
+          ).catchError(
+            (error) {
+              var innerError = error as HttpException;
+              showExceptionDialog(context, content: innerError.message);
+            },
+            test: (error) => error is HttpException,
+          ).then((value) {
             refreshFunction();
           });
         }

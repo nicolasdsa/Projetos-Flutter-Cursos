@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:journal_webapi_authentication/helpers/logout.dart';
+import 'package:journal_webapi_authentication/screens/common/exception_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/journal.dart';
 import '../../services/journal_service.dart';
 import 'widgets/home_screen_list.dart';
@@ -22,6 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final ScrollController _listScrollController = ScrollController();
   final JournalService _journalService = JournalService();
+
+  String? userId;
 
   @override
   void initState() {
@@ -48,30 +55,107 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: ListView(
-        controller: _listScrollController,
-        children: generateListJournalCards(
-          windowPage: windowPage,
-          currentDay: currentDay,
-          database: database,
-          refreshFunction: refresh,
-        ),
-      ),
+      drawer: Drawer(
+          child: ListView(
+        children: [
+          ListTile(
+            onTap: () {
+              logout(context);
+            },
+            title: const Text("Sair"),
+            leading: const Icon(Icons.logout),
+          )
+        ],
+      )),
+      body: (userId != null)
+          ? ListView(
+              controller: _listScrollController,
+              children: generateListJournalCards(
+                userId: userId!,
+                windowPage: windowPage,
+                currentDay: currentDay,
+                database: database,
+                refreshFunction: refresh,
+              ),
+            )
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 
   void refresh() async {
-    List<Journal> listJournal = await _journalService.getAll();
-    setState(() {
-      database = {};
-      for (Journal journal in listJournal) {
-        database[journal.id] = journal;
+    SharedPreferences.getInstance().then((prefs) {
+      String? token = prefs.getString('accessToken');
+      String? id = prefs.getString('id');
+      String? email = prefs.getString('email');
+
+      if (token != null && id != null && email != null) {
+        _journalService
+            .getAll(id: id, token: token)
+            .then((List<Journal> listJournal) {
+          setState(() {
+            userId = id;
+            database = {};
+            for (Journal journal in listJournal) {
+              database[journal.id] = journal;
+            }
+
+            if (_listScrollController.hasClients) {
+              final double position =
+                  _listScrollController.position.maxScrollExtent;
+              _listScrollController.jumpTo(position);
+            }
+          });
+        });
+      } else {
+        Navigator.pushReplacementNamed(context, 'login');
+      }
+    }).catchError(
+      (error) {
+        logout(context);
+      },
+      test: (error) => error is UnauthorizedException,
+    ).catchError(
+      (error) {
+        var innerError = error as HttpException;
+        showExceptionDialog(context, content: innerError.message);
+      },
+      test: (error) => error is HttpException,
+    );
+  }
+
+  /*void refresh() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("accessToken");
+      String? id = prefs.getString("id");
+
+      if (token == null && id == null && mounted) {
+        Navigator.pushReplacementNamed(context, "login");
       }
 
-      if (_listScrollController.hasClients) {
-        final double position = _listScrollController.position.maxScrollExtent;
-        _listScrollController.jumpTo(position);
+      List<Journal> listJournal =
+          await _journalService.getAll(id: id, token: token);
+      if (mounted) {
+        setState(() {
+          userId = id;
+          database = {};
+          for (Journal journal in listJournal) {
+            database[journal.id] = journal;
+          }
+
+          if (_listScrollController.hasClients) {
+            final double position =
+                _listScrollController.position.maxScrollExtent;
+            _listScrollController.jumpTo(position);
+          }
+        });
       }
-    });
-  }
+    } on UnauthorizedException {
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, "login");
+      }
+    }
+  }*/
 }

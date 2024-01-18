@@ -2,19 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:http_interceptor/http/intercepted_client.dart';
-import 'package:journal_webapi_authentication/services/http_interceptors.dart';
+import 'package:journal_webapi_authentication/services/webclient.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  static const String url = "http://10.0.2.2:3000";
-
-  http.Client client = InterceptedClient.build(
-    interceptors: [LoggingInterceptor()],
-  );
+  String url = WebClient.url;
+  http.Client client = WebClient().client;
 
   Future<bool> login({required String email, required String password}) async {
-    http.Response response = await client.post(Uri.parse('$url/auth/signin'),
+    http.Response response = await client.post(Uri.parse("${url}auth/signin"),
         headers: {'Content-type': 'application/json'},
         body: json.encode({'email': email, 'password': password}));
 
@@ -34,16 +30,18 @@ class AuthService {
     return true;
   }
 
-  register({required String email, required String password}) async {
-    http.Response response = await client.post(Uri.parse('$url/auth/signup'),
+  Future<bool> register(
+      {required String email, required String password}) async {
+    http.Response response = await client.post(Uri.parse('${url}auth/signup'),
         headers: {'Content-type': 'application/json'},
         body: json.encode({'email': email, 'password': password}));
 
-    if (response.statusCode != 202) {
+    if (response.statusCode != 201) {
       throw HttpException(response.body);
     }
 
     saveUserInfos(response.body);
+    return true;
   }
 
   saveUserInfos(String body) async {

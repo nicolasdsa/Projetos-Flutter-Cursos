@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:journal_webapi_authentication/helpers/logout.dart';
+import 'package:journal_webapi_authentication/screens/common/exception_dialog.dart';
 import '../../helpers/weekday.dart';
 import '../../models/journal.dart';
 import '../../services/journal_service.dart';
@@ -64,7 +68,18 @@ class _AddJournalScreenState extends State<AddJournalScreen> {
         } else {
           Navigator.pop(context, DisposeStatus.error);
         }
-      });
+      }).catchError(
+        (error) {
+          logout(context);
+        },
+        test: (error) => error is UnauthorizedException,
+      ).catchError(
+        (error) {
+          var innerError = error as HttpException;
+          showExceptionDialog(context, content: innerError.message);
+        },
+        test: (error) => error is HttpException,
+      );
     } else {
       journalService.register(widget.journal).then((value) {
         if (value) {
@@ -72,7 +87,18 @@ class _AddJournalScreenState extends State<AddJournalScreen> {
         } else {
           Navigator.pop(context, DisposeStatus.error);
         }
-      });
+      }).catchError(
+        (error) {
+          logout(context);
+        },
+        test: (error) => error is UnauthorizedException,
+      ).catchError(
+        (error) {
+          var innerError = error as HttpException;
+          showExceptionDialog(context, content: innerError.message);
+        },
+        test: (error) => error is HttpException,
+      );
     }
   }
 }

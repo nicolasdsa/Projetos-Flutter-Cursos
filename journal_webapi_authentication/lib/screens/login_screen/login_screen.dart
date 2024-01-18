@@ -1,13 +1,17 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:journal_webapi_authentication/screens/common/confirmation_dialog.dart';
+import 'package:journal_webapi_authentication/screens/common/exception_dialog.dart';
 import 'package:journal_webapi_authentication/services/auth_service.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
 
-  AuthService service = AuthService();
+  final AuthService service = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -71,18 +75,44 @@ class LoginScreen extends StatelessWidget {
     String email = _emailController.text;
     String pass = _passController.text;
 
-    try {
-      bool result = await service.login(email: email, password: pass);
-    } on UserNotFindException {
-      showConfirmationDialog(context,
-              content:
-                  "Deseja criar um novo usuário usando o e-mail $email? e a senha inserida?",
-              affirmativeOption: "CRIAR")
-          .then((value) {
-        if (value! != null && value) {
-          service.register(email: email, password: pass);
+    service.login(email: email, password: pass).then(
+      (value) {
+        if (value) {
+          Navigator.pushReplacementNamed(context, "home");
         }
-      });
-    }
+        return value;
+      },
+    ).catchError(
+      (error) {
+        var innerError = error as HttpException;
+        return showExceptionDialog(context, content: innerError.message);
+      },
+      test: (error) => error is HttpException,
+    ).catchError(
+      (error) {
+        showConfirmationDialog(context,
+                content:
+                    "Deseja criar um novo usuário usando o e-mail $email? e a senha inserida?",
+                affirmativeOption: "CRIAR")
+            .then((value) {
+          if (value! != null && value) {
+            service.register(email: email, password: pass).then((value) {
+              if (value) {
+                Navigator.pushReplacementNamed(context, "home");
+              }
+            });
+          }
+        });
+        return Future.value(false);
+      },
+      test: (error) => error is UserNotFindException,
+    ).catchError(
+      (error) {
+        showExceptionDialog(context,
+            content: "O servidor demorou para responder");
+        return Future.value(false);
+      },
+      test: (error) => error is TimeoutException,
+    );
   }
 }
