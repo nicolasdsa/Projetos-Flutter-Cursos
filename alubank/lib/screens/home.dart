@@ -1,4 +1,7 @@
+import 'package:alubank/components/sections/account_actions.dart';
+import 'package:alubank/components/sections/account_points.dart';
 import 'package:alubank/components/sections/header.dart';
+import 'package:alubank/components/sections/recent_activity.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
@@ -6,10 +9,13 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Column(
-        children: <Widget>[
+    return Scaffold(
+      body: ListView(
+        children: const [
           Header(),
+          RecentActivity(),
+          AccountActions(),
+          AccountPoints()
         ],
       ),
     );
