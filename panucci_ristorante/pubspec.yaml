@@ -61,8 +61,39 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
-
+  #   - images/a_dot_ham.jpe
+  assets:
+    - assets/images/caipirinha.jpg
+    - assets/images/chicken-salad.png
+    - assets/images/chicken-tender.png
+    - assets/images/chicken-tortilla.png
+    - assets/images/cold-noodles.png
+    - assets/images/coxinhas.png
+    - assets/images/fish-n-salsa.png
+    - assets/images/hamburger-ink.png
+    - assets/images/pamonha.png
+    - assets/images/penne-au-sugo.png
+    - assets/images/rice-n-beans.jpg
+    - assets/images/shrimp-n-rice.png
+    - assets/images/spagetti.png
+    - assets/images/special-drink1.png
+    - assets/images/special-drink2.png
+    - assets/images/special-drink3.png
+    - assets/images/special-drink4.png
+    - assets/images/special-drink5.png
+    - assets/images/special-drink6.png
+    - assets/images/special-drink7.png
+    - assets/images/steak-veggies.png
+    - assets/images/steak.png
+    - assets/images/tapioca-taco.jpg
+    - assets/images/lasagna-bolognese.jpg
+    - assets/images/visa.png
+  
+  fonts:
+    - family: Caveat
+      fonts:
+        - asset: assets/fonts/Caveat-Regular.ttf
+        
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
