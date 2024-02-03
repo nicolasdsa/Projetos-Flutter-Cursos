@@ -8,17 +8,39 @@ class DrinkMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemBuilder: (context, index) {
-        return DrinkItem(
-          itemTitle: items[index]['name'],
-          itemPrice: items[index]['price'],
-          imageURI: items[index]['image'],
-        );
-      },
-      itemCount: items.length,
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: CustomScrollView(
+        slivers: <Widget>[
+          const SliverToBoxAdapter(
+              child: Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: Text(
+              "Bebidas",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontFamily: "Caveat", fontSize: 32),
+            ),
+          )),
+          SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                  (context, index) => DrinkItem(
+                      imageURI: items[index]['image'],
+                      itemTitle: items[index]['name'],
+                      itemPrice: items[index]['price']),
+                  childCount: items.length),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: MediaQuery.of(context).orientation ==
+                          Orientation.landscape
+                      ? 3
+                      : 2,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: MediaQuery.of(context).orientation ==
+                          Orientation.landscape
+                      ? 1.2
+                      : 158 / 194))
+        ],
+      ),
     );
   }
 }

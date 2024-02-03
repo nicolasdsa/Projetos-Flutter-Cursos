@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:panucci_ristorante/screens/checkout.dart';
 import 'package:panucci_ristorante/screens/home.dart';
 
 void main() {
@@ -6,14 +7,13 @@ void main() {
 }
 
 class PanucciRistorante extends StatelessWidget {
-const PanucciRistorante({ Key? key }) : super(key: key);
+  const PanucciRistorante({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Panucci Ristorante",
-      theme: ThemeData(colorSchemeSeed: Colors.purple, useMaterial3: true),
-      home: const Home()
-    );
+        title: "Panucci Ristorante",
+        theme: ThemeData(colorSchemeSeed: Colors.purple, useMaterial3: true),
+        home: const Home());
   }
 }
