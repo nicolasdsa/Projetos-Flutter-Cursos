@@ -38,7 +38,7 @@ class _ClientTypesPageState extends State<ClientTypesPage> {
                   iconColor: Colors.deepOrange,
                 ),
                 onDismissed: (direction) {
-                  list.types.removeAt(index);
+                  list.remove(index);
                 },
               );
             },
